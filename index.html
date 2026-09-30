@@ -1,0 +1,564 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Slope, Water &amp; Sediment Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet"><style>:root{
+  --bg:#EEF1EE; --panel:#FFFFFF; --ink:#18221F; --muted:#5A6863; --line:#D3DBD6; --soft:#F5F7F5;
+  --water:#2F6FA8; --water2:#5E9BD0; --waterL:#BFD8EE; --sand:#DCC89B; --sandD:#BFA673; --wet:#A88F5E; --sed:#9C6B2C; --ero:#B4462F;
+  --accent:#2F5E86; --accentT:#FFFFFF; --ok:#2F8A55; --warn:#8A5CC8; --tray:#9AA7A1;
+  --c1:#2F5E86; --c2:#B4462F; --c3:#2F8A55;
+  --display:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
+  --body:"Inter",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#121816; --panel:#1A2220; --ink:#E3EAE6; --muted:#9BA9A4; --line:#2E3A37; --soft:#161E1C;
+  --water:#4E8FC8; --water2:#77AEDD; --waterL:#2B4C68; --sand:#8C7A55; --sandD:#766645; --wet:#62543A; --sed:#D29A52; --ero:#E27459;
+  --accent:#6FA6D6; --accentT:#0E1716; --ok:#5DBA84; --warn:#B294E6; --tray:#4F5B57;
+  --c1:#6FA6D6; --c2:#E27459; --c3:#5DBA84;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121816; --panel:#1A2220; --ink:#E3EAE6; --muted:#9BA9A4; --line:#2E3A37; --soft:#161E1C;
+  --water:#4E8FC8; --water2:#77AEDD; --waterL:#2B4C68; --sand:#8C7A55; --sandD:#766645; --wet:#62543A; --sed:#D29A52; --ero:#E27459;
+  --accent:#6FA6D6; --accentT:#0E1716; --ok:#5DBA84; --warn:#B294E6; --tray:#4F5B57;
+  --c1:#6FA6D6; --c2:#E27459; --c3:#5DBA84;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;padding:0 16px}
+.wrap{max-width:1240px;margin:0 auto;padding-block:22px 48px}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
+.app{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--soft)}
+.top h1{font-size:18px}
+.top .q{font-size:13px;color:var(--muted)}
+.steps{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+.st{font-size:12px;padding:3px 10px;border-radius:4px;border:1px solid var(--line);color:var(--muted);background:var(--panel)}
+.st.on{background:var(--accent);border-color:var(--accent);color:var(--accentT)}
+.st.done{color:var(--accent);border-color:var(--accent)}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:0}
+.stage{padding:12px;border-right:1px solid var(--line);min-width:0}
+.stage svg{display:block;width:100%;height:auto}
+.side{padding:14px 16px;display:flex;flex-direction:column;gap:14px}
+.sec h3{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:6px;letter-spacing:.02em}
+.big{font-family:var(--mono);font-size:38px;font-weight:500;line-height:1}
+.big small{font-size:16px;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.rng{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.lock{display:grid;grid-template-columns:18px 1fr auto;gap:6px;align-items:center;font-size:13.5px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.lock span:last-child{color:var(--muted);font-size:12.5px}
+.btn{font:inherit;font-size:14px;padding:9px 16px;border-radius:6px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accentT);font-weight:600}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,.ch:focus-visible,.tab:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
+.btn.wide{width:100%}
+.meas{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:13.5px;align-items:baseline}
+.meas b{font-family:var(--mono);font-size:17px;font-weight:500;text-align:right}
+.meas .u{grid-column:1/-1;font-size:11.5px;color:var(--muted);margin-top:2px}
+.bar{height:6px;border-radius:3px;background:var(--soft);grid-column:1/-1;overflow:hidden;margin-bottom:4px}
+.bar i{display:block;height:100%}
+.note{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+.tab{font:inherit;font-size:13px;padding:5px 12px;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.tab.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.tab:disabled{opacity:.4;cursor:not-allowed}
+.data{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0;border-top:1px solid var(--line)}
+.data>div{padding:12px 16px;min-width:0}
+.data>div+div{border-left:1px solid var(--line)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:11.5px}
+th:first-child,td:first-child{text-align:left}
+tr.cur td{background:var(--soft);font-weight:600}
+.ch{font:inherit;font-size:14px;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.ch.on{border:2px solid var(--accent);padding:9px 11px}
+.chrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pq{margin-bottom:14px}
+.pq p{margin:0 0 8px;font-size:14.5px}
+.fb{border-radius:8px;padding:9px 11px;font-size:13.5px;background:var(--soft);border:1px solid var(--line)}
+.fb b{color:var(--accent)}
+.okT{color:var(--ok);font-weight:600}.noT{color:var(--warn);font-weight:600}
+textarea{font:inherit;font-size:14px;width:100%;min-height:62px;padding:8px 10px;border-radius:6px;border:1px solid var(--line);background:var(--soft);color:var(--ink);resize:vertical}
+.radios{display:flex;gap:8px;flex-wrap:wrap}
+.radios label{display:flex;gap:6px;align-items:center;font-size:14px;border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer}
+.hidden{display:none!important}
+.coord{font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media (max-width:900px){.main{grid-template-columns:1fr}.stage{border-right:0;border-bottom:1px solid var(--line)}.data{grid-template-columns:1fr}.data>div+div{border-left:0;border-top:1px solid var(--line)}}
+/* svg */
+.gl{stroke:rgba(0,0,0,.10);stroke-width:1}
+.glM{stroke:rgba(0,0,0,.22);stroke-width:1}
+.ax{font-family:var(--mono);font-size:10px;fill:var(--muted)}
+.lbl{font-family:var(--body);font-size:12px;fill:var(--ink)}
+.lblS{font-family:var(--body);font-size:11px;fill:var(--muted)}
+.call{font-family:var(--body);font-size:12px;fill:#fff}
+.wm{font-family:var(--body);font-size:11px;fill:var(--muted)}
+
+.stage .note svg{display:inline-block;width:auto;vertical-align:middle;margin-right:4px}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mc{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--soft);display:flex;flex-direction:column;gap:3px;min-width:0}
+.mc:first-child{grid-column:1/-1}
+.mh{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)}
+.mv b{font-family:var(--mono);font-size:26px;font-weight:500;line-height:1.1}
+.mv small{font-size:11.5px;color:var(--muted);margin-left:4px}
+.mc .bar{margin:2px 0 0}
+.dl{font-family:var(--mono);font-size:12px;color:var(--muted)} .dl.up{color:var(--ero)} .dl.dn{color:var(--water)} .dl small{font-family:var(--body);font-size:10.5px;color:var(--muted)}
+.fixed{font-size:12.5px;color:var(--muted);background:var(--soft);border:1px dashed var(--line);border-radius:6px;padding:6px 9px}
+.fixed small{display:block;font-size:11px}
+.mlist{display:flex;flex-direction:column;gap:4px}
+.mlist div{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;border-bottom:1px dashed var(--line);padding:3px 0}
+.mlist small{color:var(--muted);font-family:var(--mono);font-size:11.5px}
+.proc{display:flex;align-items:stretch;gap:6px;margin:0 0 4px}
+.pc{flex:1;border:1px solid var(--line);border-radius:8px;padding:6px 9px;background:var(--soft);display:flex;flex-direction:column;gap:1px;min-width:0;transition:border-color .3s,background .3s}
+.pc b{font-size:13.5px}.pc span{font-size:12px;color:var(--muted)}.pc i{font-style:normal;font-family:var(--mono);font-weight:600;color:var(--ink)}
+.pc.e b{color:var(--ero)}.pc.t b{color:var(--water)}.pc.d b{color:var(--sed)}
+.pc.live{border-color:var(--ink)}
+.pa{align-self:center;color:var(--muted)}
+.sent{line-height:1.7}
+.blank{display:inline-block;min-width:64px;border-bottom:2px solid var(--muted);text-align:center;font-weight:600;padding:0 4px}
+.blank.on{border-color:var(--c1);color:var(--c1)}
+.chk{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ck{display:flex;gap:8px;align-items:center;font:inherit;font-size:13.5px;text-align:left;border:1px solid var(--line);border-radius:6px;padding:7px 9px;background:var(--panel);color:var(--ink);cursor:pointer}
+.ck:disabled{opacity:.45;cursor:not-allowed}
+.ck.on{border-color:var(--c1);background:var(--soft)}
+.bx{width:16px;height:16px;border:1.5px solid var(--muted);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:var(--c1);flex:none}
+.ck.on .bx{border-color:var(--c1)}
+.photobar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.photobar .note{flex-basis:100%}
+.btn.sm{padding:5px 10px;font-size:13px;cursor:pointer}
+@media (max-width:600px){.proc{flex-direction:column}.pa{display:none}.chk{grid-template-columns:1fr}}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}@media (max-width:600px){.two{grid-template-columns:1fr}}
+</style><div class="wrap" lang="en"><div class="app" id="app"></div></div><script>(function(){
+'use strict';
+var $=function(s){return document.querySelector(s);};
+var NS='http://www.w3.org/2000/svg';
+var MIN=2, MAX=12, STEP=0.5;
+/* ---------- model (학습용 규칙 모델 · 모델 단위) ---------- */
+function model(th){
+ var F=Math.round(18+5.2*th);                          // 물의 움직임 (입자 애니메이션 속도용)
+ var T=Math.round(90/F*10)/10;                          // Time for water to reach the outlet (model s)
+ var E=Math.round(4+1.5*th+0.09*th*th);                // 깎인 흙 (두 굽이 합)
+ var C=Math.round(E*(0.25+0.035*th));                   // 수집통으로 나간 흙
+ var D=E-C;                                             // 실험대 안에 쌓인 흙
+ var M=Math.round((0.6+0.3*th)*10)/10;                  // 바깥 강둑이 밀려난 거리 (cm, 모델)
+ return {th:th,F:F,T:T,E:E,C:C,D:D,M:M,s:M*10};
+}
+/* ---------- geometry: 곡류 (L2.2 지형 카드 7번) · 10px = 1cm
+   굽이는 바깥쪽으로 밀려나면서 조금씩 하류 쪽으로 이동해요 (실제 곡류의 이동 방향) ---------- */
+function sh(s){ return 0.5*(s||0); }
+function chan(s){ s=s||0; var a=sh(s); return 'M40 200 C120 200 '+(150+a)+' '+(90-s)+' '+(240+a)+' '+(90-s)+' C'+(330+a)+' '+(90-s)+' '+(350+a)+' '+(310+s)+' '+(430+a)+' '+(310+s)+' C'+(510+a)+' '+(310+s)+' 540 200 620 200'; }
+var W=26; // 물길 폭 2.6cm
+var FIXED=[['Sand','Fine sand · 3 cm deep'],['Starting landform','Meander · 2 bends · channel 2.6 cm wide'],['Water input','Cup with 1 hole · 1 cup of water'],['Run time','Until 1 cup of water has drained']];
+/* ---------- state ---------- */
+var S;
+function init(){ S={screen:'setup',th:6,pred:{water:null,sed:null,pins:[]},trials:[],cur:null,view:'result',cmpWith:null,graph:'C',running:false,side:'top',mix:100,
+ cmp:{},concl:{},comm:{photo:null,spot:null,obs:{},qa:{},next:null}}; }
+/* ---------- svg: stream table ---------- */
+function defs(u){
+ return '<defs>'
+ +'<filter id="sandTex'+u+'" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .22 0"/><feComposite in2="SourceGraphic" operator="in"/><feBlend in="SourceGraphic" mode="multiply"/></filter>'
+ +'<pattern id="hat'+u+'" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="var(--ero)" opacity=".25"/><line x1="0" y1="0" x2="0" y2="7" stroke="var(--ero)" stroke-width="2.4"/></pattern>'
+ +'<pattern id="dot'+u+'" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="var(--sed)" opacity=".35"/><circle cx="3" cy="3" r="1.4" fill="var(--sed)"/></pattern>'
+ +'<clipPath id="tc'+u+'"><rect x="20" y="30" width="600" height="360"/></clipPath>'
+ +'<marker id="ar'+u+'" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker>'
+ +'</defs>';
+}
+function grid(){
+ var g='';
+ for(var x=20;x<=620;x+=50){ g+='<line x1="'+x+'" y1="30" x2="'+x+'" y2="390" class="'+((x-20)%100===0?'glM':'gl')+'"/>'; }
+ for(var y=30;y<=390;y+=50){ g+='<line x1="20" y1="'+y+'" x2="620" y2="'+y+'" class="'+((y-30)%100===0?'glM':'gl')+'"/>'; }
+ var a='';
+ for(var cx=0;cx<=60;cx+=10) a+='<text x="'+(20+cx*10)+'" y="24" text-anchor="middle" class="ax">'+cx+'</text>';
+ for(var cy=0;cy<=35;cy+=10) a+='<text x="14" y="'+(34+cy*10)+'" text-anchor="end" class="ax">'+cy+'</text>';
+ a+='<text x="640" y="24" class="ax">cm</text>';
+ return {g:g,a:a};
+}
+/* o: {u, s, showAfter, ero, dep, pins, ghost:{s}, bin, fan, flow, dim, lab, zones, extra } */
+function table(o){
+ var u=o.u, s=o.showAfter?o.s:0, G=grid(), a=sh(o.s||0);
+ var h='<svg viewBox="0 0 690 420" role="img" aria-label="Top view of the stream table" id="svg'+u+'">'+defs(u);
+ h+='<rect x="12" y="22" width="616" height="376" rx="6" fill="var(--tray)"/>';
+ h+='<rect x="20" y="30" width="600" height="360" fill="var(--sand)" filter="url(#sandTex'+u+')"/>';
+ h+='<g clip-path="url(#tc'+u+')">';
+ if(o.ghost){ h+='<path d="'+chan(o.ghost.s)+'" fill="none" stroke="var(--water)" stroke-width="'+W+'" stroke-linecap="butt" opacity=".35" stroke-dasharray="12 8"/>'; }
+ if(o.showAfter){ h+='<path d="'+chan(0)+'" fill="none" stroke="var(--wet)" stroke-width="'+W+'" opacity=".45"/>'; }
+ h+='<path id="wet'+u+'" d="'+chan(s)+'" fill="none" stroke="var(--wet)" stroke-width="'+(W+8)+'" stroke-linecap="butt"/>';
+ h+='<path id="wat'+u+'" d="'+chan(s)+'" fill="none" stroke="var(--water)" stroke-width="'+W+'" stroke-linecap="butt"/>';
+ h+='<path id="core'+u+'" d="'+chan(s)+'" fill="none" stroke="var(--water2)" stroke-width="10" opacity=".7" stroke-linecap="butt"/>';
+ if(o.ero && o.s>0){ h+='<mask id="mE'+u+'"><rect x="0" y="0" width="690" height="420" fill="black"/><path d="'+chan(o.s)+'" stroke="white" stroke-width="'+W+'" fill="none"/><path d="'+chan(0)+'" stroke="black" stroke-width="'+W+'" fill="none"/></mask><rect x="20" y="30" width="600" height="360" fill="url(#hat'+u+')" mask="url(#mE'+u+')"/>'; }
+ if(o.dep && o.s>0){ h+='<mask id="mD'+u+'"><rect x="0" y="0" width="690" height="420" fill="black"/><path d="'+chan(0)+'" stroke="white" stroke-width="'+W+'" fill="none"/><path d="'+chan(o.s)+'" stroke="black" stroke-width="'+W+'" fill="none"/></mask><rect x="20" y="30" width="600" height="360" fill="url(#dot'+u+')" mask="url(#mD'+u+')"/>'; }
+ if(o.fan) h+='<ellipse cx="612" cy="200" rx="'+(6+o.fan*0.9)+'" ry="'+(14+o.fan*1.4)+'" fill="url(#dot'+u+')"/>';
+ if(o.flow) h+=flowParticles(s);
+ h+='<g id="grains'+u+'"></g>';
+ h+='</g>'+G.g+G.a;
+ h+='<g><rect x="4" y="184" width="30" height="32" rx="3" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"/><text x="19" y="178" text-anchor="middle" class="lblS">Cup</text></g>';
+ h+='<rect x="620" y="186" width="12" height="28" fill="var(--tray)"/>';
+ h+='<g><path d="M634 170 H682 L676 252 H640 Z" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"/><text x="658" y="268" text-anchor="middle" class="lblS">Bin</text>';
+ if(o.bin){ var lv=Math.min(1,o.bin/40), top=250-lv*76; h+='<path d="M'+(641+(250-top)*0.08)+' '+top+' H'+(675-(250-top)*0.08)+' L676 250 H640 Z" fill="var(--sed)" opacity=".85"/><text x="658" y="'+(top-4)+'" text-anchor="middle" style="font:600 12px var(--mono);fill:var(--ink)">'+o.bin+'</text>'; }
+ for(var tk=0;tk<=40;tk+=10){ var ty=250-tk/40*76; h+='<line x1="682" x2="686" y1="'+ty+'" y2="'+ty+'" stroke="var(--muted)"/>'; }
+ h+='<g id="binG'+u+'"></g></g>';
+ if(o.dim && o.s>0){
+  var d1a=90-W/2, d1b=d1a-o.s, x1=240+a, d2a=310+W/2, d2b=d2a+o.s, x2=430+a;
+  h+='<line x1="'+x1+'" y1="'+d1a+'" x2="'+x1+'" y2="'+d1b+'" stroke="var(--ink)" stroke-width="1.4" marker-start="url(#ar'+u+')" marker-end="url(#ar'+u+')"/><text x="'+(x1+6)+'" y="'+((d1a+d1b)/2+4)+'" class="lbl" style="font-weight:600">'+(o.s/10).toFixed(1)+' cm</text>';
+  h+='<line x1="'+x2+'" y1="'+d2a+'" x2="'+x2+'" y2="'+d2b+'" stroke="var(--ink)" stroke-width="1.4" marker-start="url(#ar'+u+')" marker-end="url(#ar'+u+')"/><text x="'+(x2+6)+'" y="'+((d2a+d2b)/2+4)+'" class="lbl" style="font-weight:600">'+(o.s/10).toFixed(1)+' cm</text>';
+ }
+ if(o.lab){ var L=o.lab;
+  h+=tag(x1c(o.s)-44,90-W/2-o.s-14,'Eroded ①','var(--ero)')+tag(430+a-44,310+W/2+o.s+16,'Eroded ②','var(--ero)');
+  h+=tag(240+a,90+W/2-o.s/2+4,'Deposited','var(--sed)')+tag(430+a,310-W/2+o.s/2-4,'Deposited','var(--sed)');
+  h+='<g><rect x="28" y="344" width="300" height="38" rx="6" fill="var(--panel)" opacity=".94" stroke="var(--line)"/><text x="40" y="368" style="font:600 13px var(--body);fill:var(--ink)"><tspan style="fill:var(--ero)">Eroded '+L.E+'</tspan> = <tspan style="fill:var(--sed)">Deposited '+L.D+'</tspan> + Bin '+L.C+'</text></g>';
+ }
+ (o.pins||[]).forEach(function(p,i){ h+=pinSvg(p.x,p.y,p.ghost,i+1); });
+ if(o.extra) h+=o.extra;
+ h+='</svg>';
+ return h;
+}
+function x1c(s){ return 240+sh(s); }
+function tag(x,y,t,c){ var w=t.length*6.6+18; return '<g><rect x="'+(x-w/2)+'" y="'+(y-11)+'" width="'+w+'" height="20" rx="10" fill="'+c+'"/><text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" style="font:600 11.5px var(--body);fill:#fff">'+t+'</text></g>'; }
+function pinSvg(x,y,ghost,n){ return '<g transform="translate('+(x-10)+' '+(y-28)+')"><path d="M10 28C10 28 2 16 2 10A8 8 0 0 1 18 10C18 16 10 28 10 28Z" fill="'+(ghost?'var(--panel)':'var(--ero)')+'" stroke="var(--ero)" stroke-width="2"/><text x="10" y="14" text-anchor="middle" style="font-size:10px;font-weight:700;fill:'+(ghost?'var(--ero)':'#fff')+'">'+(n||'')+'</text></g>'; }
+function flowParticles(s){
+ var F=model(S.th).F, dur=(6*40/F).toFixed(2), d=chan(s), out='';
+ for(var k=0;k<8;k++) out+='<circle r="2.6" fill="#fff" opacity=".85"><animateMotion dur="'+dur+'s" begin="'+(-k*dur/8).toFixed(2)+'s" repeatCount="indefinite" path="'+d+'"/></circle>';
+ return out;
+}
+function sideView(th){
+ var blocks=Math.max(1,Math.round(th/2));
+ var b=''; for(var i=0;i<blocks;i++) b+='<rect x="30" y="'+(96-i*9)+'" width="34" height="9" fill="#B8894F" stroke="#7A5A30" stroke-width="1"/>';
+ var ang=Math.min(th*1.6,26);
+ return '<svg viewBox="0 0 280 120" role="img" aria-label="Side view of the stream table, downstream slope '+th+'°"><rect x="0" y="0" width="280" height="120" rx="6" fill="var(--soft)"/>'
+  +'<line x1="20" y1="106" x2="262" y2="106" stroke="var(--line)" stroke-width="2"/>'+b
+  +'<g transform="rotate('+ang+' 250 104)" style="transition:transform .25s"><rect x="40" y="96" width="212" height="8" fill="var(--tray)"/><rect x="42" y="90" width="208" height="6" fill="var(--sand)"/><rect x="42" y="88" width="208" height="3" fill="var(--water)" opacity=".8"/></g>'
+  +'<text x="12" y="18" class="lblS">Side view · slope set with '+blocks+' block'+(blocks>1?'s':'')+'</text><text x="200" y="36" class="lbl" style="font-family:var(--mono);font-weight:600">'+th.toFixed(1)+'°</text><text x="20" y="62" class="lblS">Water in</text>'
+  +'<text x="176" y="118" class="lblS">(angle exaggerated)</text></svg>';
+}
+/* ---------- 예측 핀 판정: 곡류에서는 굽이마다 바깥쪽 강둑이 깎여요 ---------- */
+var BANK=null;
+function bank(){
+ if(BANK) return BANK;
+ var sv=document.createElementNS(NS,'svg'); sv.setAttribute('style','position:absolute;width:0;height:0;overflow:hidden');
+ var p=document.createElementNS(NS,'path'); p.setAttribute('d',chan(0)); sv.appendChild(p); document.body.appendChild(sv);
+ var L=p.getTotalLength(), o1=[],o2=[],inn=[],ctr=[];
+ for(var i=0;i<=300;i++){ var q=p.getPointAtLength(L*i/300), r=p.getPointAtLength(Math.min(L,L*i/300+1)); var dx=r.x-q.x, dy=r.y-q.y, n=Math.hypot(dx,dy)||1, nx=-dy/n, ny=dx/n;
+  var A={x:q.x+nx*W/2,y:q.y+ny*W/2}, B={x:q.x-nx*W/2,y:q.y-ny*W/2}, up=A.y<B.y?A:B, dn=A.y<B.y?B:A; ctr.push(q);
+  if(q.x>=150&&q.x<=335){ o1.push(up); inn.push(dn); } else if(q.x>=345&&q.x<=530){ o2.push(dn); inn.push(up); } }
+ document.body.removeChild(sv);
+ BANK={o1:o1,o2:o2,inn:inn,ctr:ctr}; return BANK;
+}
+function near(p,arr){ var m=1e9; arr.forEach(function(q){ var d=Math.hypot(p.x-q.x,p.y-q.y); if(d<m) m=d; }); return m; }
+function classify(p){ var b=bank(); if(near(p,b.ctr)<=6) return 'ch'; var c=[['o1',near(p,b.o1)],['o2',near(p,b.o2)],['in',near(p,b.inn)]].sort(function(x,y){return x[1]-y[1];})[0]; if(c[1]<=22) return c[0]; if(near(p,b.ctr)<=W/2) return 'ch'; return 'far'; }
+var PINTXT={o1:['Outer bank of bend 1','eroded ✓',true],o2:['Outer bank of bend 2','eroded ✓',true],in:['Inner bank of a bend','sediment was deposited here',false],ch:['Middle of the channel','not a bank',false],far:['Far from the channel','no change',false]};
+function pinReport(){
+ var pins=S.pred.pins, got={};
+ var rows=pins.map(function(p,i){ var c=classify(p), t=PINTXT[c]; if(t[2]) got[c]=1; return '<div>Pin '+(i+1)+' · '+t[0]+' → '+(t[2]?'<span class="okT">'+t[1]+'</span>':'<span class="noT">'+t[1]+'</span>')+'</div>'; }).join('');
+ var k=Object.keys(got).length;
+ return '<div class="fb"><b>My pins vs. actual erosion</b><br>'+rows+'<div style="margin-top:4px">Erosion actually happened on the <b>outer banks of both bends</b> (hatched). You marked <b>'+k+' of 2</b>.</div></div>';
+}
+/* ---------- chart ---------- */
+function barChart(){
+ if(!S.trials.length) return '<svg viewBox="0 0 400 200"><text x="200" y="100" text-anchor="middle" class="lblS">Run a trial to add a bar</text></svg>';
+ var tr=S.trials.slice().sort(function(a,b){return a.th-b.th;});
+ var mx=Math.max(8,Math.ceil(Math.max.apply(null,tr.map(function(t){return t.E;}))/4)*4), n=tr.length, bw=Math.min(40,200/n);
+ var Y=function(v){return 160-v/mx*130;}, h='<svg viewBox="0 0 400 200" role="img" aria-label="Bar chart of where the eroded sediment went, by trial">';
+ for(var i=0;i<=4;i++){ var yv=mx*i/4; h+='<line x1="46" x2="300" y1="'+Y(yv)+'" y2="'+Y(yv)+'" class="gl"/><text x="40" y="'+(Y(yv)+3)+'" text-anchor="end" class="ax">'+Math.round(yv)+'</text>'; }
+ tr.forEach(function(t,k){ var x=60+k*(240/n); h+='<rect x="'+x+'" y="'+Y(t.C)+'" width="'+bw+'" height="'+(160-Y(t.C))+'" fill="var(--ink)" opacity=".75"/><rect x="'+x+'" y="'+Y(t.E)+'" width="'+bw+'" height="'+(Y(t.C)-Y(t.E))+'" fill="var(--sed)"/><text x="'+(x+bw/2)+'" y="'+(Y(t.E)-4)+'" text-anchor="middle" class="ax" style="fill:var(--ink)">'+t.E+'</text><text x="'+(x+bw/2)+'" y="174" text-anchor="middle" class="ax">'+t.th+'°</text>'; });
+ h+='<line x1="46" x2="300" y1="160" y2="160" stroke="var(--muted)"/><text x="46" y="18" class="lblS">Where did the eroded sediment go? (model units)</text><text x="173" y="194" text-anchor="middle" class="lblS">Slope of each trial (low to high)</text>';
+ h+='<rect x="310" y="40" width="10" height="10" fill="var(--sed)"/><text x="324" y="49" class="ax">In tray</text><rect x="310" y="58" width="10" height="10" fill="var(--ink)" opacity=".75"/><text x="324" y="67" class="ax">Bin</text>';
+ return h+'</svg>';
+}
+function chart(key){
+ if(key==='B') return barChart();
+ var lab={C:'Sediment in the bin (model units)',E:'Eroded sediment (model units)',T:'Time for water to reach the outlet (model s)'}[key];
+ var pts=S.trials.map(function(t){return {x:t.th,y:t[key],n:t.n};}).sort(function(a,b){return a.x-b.x;});
+ var ymax=key==='T'?4:Math.max(8,Math.ceil(Math.max.apply(null,[8].concat(pts.map(function(p){return p.y;})))/4)*4);
+ var X=function(v){return 46+(v/14)*300;}, Y=function(v){return 160-(v/ymax)*130;};
+ var h='<svg viewBox="0 0 360 200" role="img" aria-label="Graph of slope vs. '+lab+'">';
+ for(var i=0;i<=4;i++){ var yv=ymax*i/4; h+='<line x1="46" x2="346" y1="'+Y(yv)+'" y2="'+Y(yv)+'" class="gl"/><text x="40" y="'+(Y(yv)+3)+'" text-anchor="end" class="ax">'+(key==='T'?yv.toFixed(1):Math.round(yv))+'</text>'; }
+ for(var x=0;x<=14;x+=2){ h+='<text x="'+X(x)+'" y="176" text-anchor="middle" class="ax">'+x+'</text>'; }
+ h+='<line x1="46" x2="346" y1="160" y2="160" stroke="var(--muted)"/><line x1="46" x2="46" y1="30" y2="160" stroke="var(--muted)"/>';
+ h+='<text x="196" y="194" text-anchor="middle" class="lblS">Downstream slope (°)</text><text x="46" y="18" class="lblS">'+lab+'</text>';
+ if(pts.length>1) h+='<polyline fill="none" stroke="var(--c1)" stroke-width="2" points="'+pts.map(function(p){return X(p.x)+','+Y(p.y);}).join(' ')+'"/>';
+ pts.forEach(function(p){ h+='<circle cx="'+X(p.x)+'" cy="'+Y(p.y)+'" r="5" fill="var(--c1)" stroke="var(--panel)" stroke-width="2"/><text x="'+(X(p.x)+7)+'" y="'+(Y(p.y)-7)+'" class="ax" style="fill:var(--ink)">'+(key==='T'?p.y.toFixed(1):p.y)+'</text>'; });
+ if(!pts.length) h+='<text x="196" y="100" text-anchor="middle" class="lblS">Run a trial to plot a point</text>';
+ return h+'</svg>';
+}
+function graphTabs(){ return '<div class="tabs">'+[['C','Bin sediment'],['E','Eroded sediment'],['T','Water arrival time'],['B','Where sediment went']].map(function(g){return '<button class="tab'+(S.graph===g[0]?' on':'')+'" data-a="graph" data-v="'+g[0]+'">'+g[1]+'</button>';}).join('')+'</div>'; }
+/* ---------- screens ---------- */
+var STEPS=['Set up','Predict','Test','Compare','Conclude','Community'];
+function steps(i){ return '<div class="steps">'+STEPS.map(function(x,k){return '<span class="st '+(k<i?'done':(k===i?'on':''))+'">'+(k<i?'✓ ':'')+x+'</span>';}).join('')+'</div>'; }
+function locks(){ return FIXED.map(function(r){return '<div class="lock"><span>🔒</span><span>'+r[0]+'</span><span>'+r[1]+'</span></div>';}).join(''); }
+function render(){
+ var a=$('#app'), h='';
+ h+='<div class="top"><div><h1>Slope, Water &amp; Sediment Lab</h1><div class="q">Investigation question · How does downstream slope affect water flow, erosion, and sediment movement?</div></div>';
+ h+=steps({setup:0,predict:1,lab:2,compare:3,conclude:4,community:5,done:6}[S.screen])+'</div>';
+ h+=({setup:vSetup,predict:vPredict,lab:vLab,compare:vCompare,conclude:vConclude,community:vCommunity,done:vDone})[S.screen]();
+ a.innerHTML=h; bind();
+}
+function vSetup(){
+ var meas=[['Time for water to reach the outlet','s (model)'],['Eroded sediment','model units'],['Sediment deposited in the tray','model units'],['Sediment carried into the bin','model units'],['Outer bank retreat','cm (model)']];
+ return '<div class="main"><div class="stage">'+table({u:'a'})+'<div class="note">Reference landform: the <b>meander</b> from the L2.2 Landforms cards, built with the L2.2 stream table setup (tray, sand, blocks, cup with a hole). Each grid square is 5 cm; the tray is 60 cm × 36 cm. <span class="coord" id="coordA"></span></div></div>'
+ +'<div class="side"><div class="sec"><h3>What we change (independent variable)</h3><div style="font-size:15px;font-weight:600">Downstream slope · '+MIN+'° to '+MAX+'°</div><div class="note">Blocks raise one end of the tray so it tilts in the direction the water flows. This is not the steepness of the bank sides.</div>'+sideView(6)+'</div>'
+ +'<div class="sec"><h3>What we keep the same (controlled variables)</h3>'+locks()+'<div class="note">These stay the same in every trial, so any change in the results can be explained by slope.</div></div>'
+ +'<div class="sec"><h3>What we measure (dependent variables)</h3><div class="mlist">'+meas.map(function(m){return '<div><span>'+m[0]+'</span><small>'+m[1]+'</small></div>';}).join('')+'</div></div>'
+ +'<button class="btn pri wide" data-a="go" data-v="predict">Go to predictions →</button></div></div>';
+}
+function vPredict(){
+ var p=S.pred;
+ var opt=function(key,v,label,icon){ return '<button class="ch'+(p[key]===v?' on':'')+'" data-a="pred" data-k="'+key+'" data-v="'+v+'">'+icon+'<span>'+label+'</span></button>'; };
+ var ti=function(n){ return '<svg viewBox="0 0 60 24" width="60" aria-hidden="true"><rect x="4" y="9" width="'+(12+n*18)+'" height="6" rx="3" fill="var(--water)"/></svg>'; };
+ var si=function(n){ var s='<svg viewBox="0 0 60 24" width="60" aria-hidden="true">'; for(var i=0;i<n;i++) s+='<circle cx="'+(8+(i%6)*9)+'" cy="'+(8+Math.floor(i/6)*8)+'" r="3" fill="var(--sed)"/>'; return s+'</svg>'; };
+ var ok=p.water&&p.sed&&p.pins.length;
+ return '<div class="main"><div class="stage">'+table({u:'p',pins:p.pins})+'<div class="note">③ Click where you think the channel will <b>erode the most</b> to drop a pin. If you think there is more than one place, pin them all (up to 3). Click a pin again to remove it. <span class="coord" id="coordA"></span></div></div>'
+ +'<div class="side"><div class="pq"><p>① If the slope <b>increases</b>, the time for water to reach the outlet will be…</p><div class="chrow">'+opt('water','short','Shorter',ti(0))+opt('water','same','About the same',ti(1))+opt('water','long','Longer',ti(2))+'</div></div>'
+ +'<div class="pq"><p>② If the slope <b>increases</b>, the sediment carried into the bin will be…</p><div class="chrow">'+opt('sed','less','Less',si(3))+opt('sed','same','About the same',si(6))+opt('sed','more','More',si(11))+'</div></div>'
+ +'<div class="pq"><p>③ Most erosion '+(p.pins.length?'<span class="okT">✓ '+p.pins.length+' pin'+(p.pins.length>1?'s':'')+'</span>':'<span class="note">(click the tray)</span>')+'</p></div>'
+ +'<button class="btn pri wide" data-a="go" data-v="lab"'+(ok?'':' disabled')+'>Save predictions and start →</button>'+(ok?'':'<div class="note">Complete all three to continue</div>')+'</div></div>';
+}
+function procStrip(m,live){
+ var v=function(k){ return m?m[k]:'—'; };
+ return '<div class="proc" id="proc"><div class="pc e"><b>Erosion</b><span>Eroded <i id="pE">'+v('E')+'</i></span></div><div class="pa">→</div><div class="pc t"><b>Transport</b><span>Carried downstream by water</span></div><div class="pa">→</div><div class="pc d"><b>Deposition</b><span>Deposited <i id="pD">'+v('D')+'</i> · Bin <i id="pC">'+v('C')+'</i></span></div></div>'
+  +'<div class="note" style="margin:2px 0 6px">This is the path of one sediment grain. Across the whole tray, all three processes happen <b>at the same time</b>.</div>';
+}
+function vLab(){
+ var cur=S.cur, st;
+ var tabs='';
+ if(cur && !S.running){ var tt=[['result','Result'],['ba','Before / after'],['overlay','Overlay another trial'],['pred','My prediction']];
+  tabs='<div class="tabs">'+tt.map(function(t){ var dis=(t[0]==='overlay'&&S.trials.length<2); return '<button class="tab'+(S.view===t[0]?' on':'')+'" data-a="view" data-v="'+t[0]+'"'+(dis?' disabled':'')+'>'+t[1]+'</button>'; }).join('')+'<button class="tab'+(S.side==='side'?' on':'')+'" data-a="sideT" style="margin-left:auto">Cross-section</button></div>'; }
+ if(S.running) st=table({u:'m',showAfter:false});
+ else if(!cur) st=table({u:'m'});
+ else if(S.view==='ba') st='<div id="baWrap">'+table({u:'m',showAfter:true,s:cur.s,ero:true,dep:true,bin:cur.C,fan:cur.D,dim:true})+'</div><label class="note" style="display:flex;gap:8px;align-items:center">Before<input type="range" id="mix" min="0" max="100" value="'+S.mix+'" style="flex:1">After</label>';
+ else if(S.view==='overlay'){ var other=S.trials.filter(function(t){return t.n===S.cmpWith;})[0]||S.trials.filter(function(t){return t.n!==cur.n;})[0];
+  st=table({u:'m',showAfter:true,s:cur.s,ghost:{s:other.s},ero:true,bin:cur.C,extra:'<rect x="30" y="336" width="260" height="46" rx="5" fill="var(--panel)" opacity=".92"/><line x1="40" y1="352" x2="72" y2="352" stroke="var(--water)" stroke-width="7" opacity=".4" stroke-dasharray="8 5"/><text x="80" y="356" class="lblS">Trial '+other.n+' ('+other.th+'°) channel</text><line x1="40" y1="372" x2="72" y2="372" stroke="var(--water)" stroke-width="7"/><text x="80" y="376" class="lblS">Trial '+cur.n+' ('+cur.th+'°) channel</text>'})
+   +'<div class="tabs">'+S.trials.filter(function(t){return t.n!==cur.n;}).map(function(t){return '<button class="tab'+(other.n===t.n?' on':'')+'" data-a="cmp" data-v="'+t.n+'">Trial '+t.n+' ('+t.th+'°)</button>';}).join('')+'</div>'; }
+ else if(S.view==='pred'){ st=table({u:'m',showAfter:true,s:cur.s,ero:true,dep:true,bin:cur.C,pins:S.pred.pins.map(function(p){return {x:p.x,y:p.y,ghost:true};})})+pinReport(); }
+ else st=table({u:'m',showAfter:true,s:cur.s,ero:true,dep:true,bin:cur.C,fan:cur.D,dim:true,flow:true,lab:cur});
+ if(S.side==='side' && cur && !S.running) st+=sectionSvg(cur);
+ var legend=cur&&!S.running?'<div class="note" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:4px"><span><svg width="14" height="10"><rect width="14" height="10" fill="var(--ero)" opacity=".6"/></svg> Hatched: eroded land</span><span><svg width="14" height="10"><rect width="14" height="10" fill="var(--sed)" opacity=".6"/></svg> Dotted: deposited sediment</span><span>Light brown: original channel</span><span class="coord" id="coordA"></span></div>':'<div class="note"><span class="coord" id="coordA"></span></div>';
+ var side='<div class="side">';
+ side+='<div class="sec"><h3>Downstream slope'+(S.running?' · locked while running':'')+'</h3><div class="big" id="thBig">'+S.th.toFixed(1)+'<small>°</small></div><input type="range" id="th" min="'+MIN+'" max="'+MAX+'" step="'+STEP+'" value="'+S.th+'"'+(S.running?' disabled':'')+' aria-label="Downstream slope"><div class="rng"><span>'+MIN+'°</span><span>'+MAX+'°</span></div><div id="sv">'+sideView(S.th)+'</div></div>';
+ side+='<div class="sec"><div class="fixed">🔒 Kept the same · sand 3 cm · meander landform · 1 cup of water · run until the cup drains<small>Identical in every trial</small></div></div>';
+ side+='<div class="sec"><h3>Measurements'+(cur&&!S.running?' · Trial '+cur.n+' ('+cur.th+'°)':'')+'</h3>'+measHtml(S.running?null:cur)+'</div>';
+ if(S.running) side+='<button class="btn pri wide" disabled>Running…</button>';
+ else side+='<button class="btn pri wide" data-a="run"'+(S.trials.length>=6?' disabled':'')+'>▶ Run trial '+(S.trials.length+1)+' ('+S.th.toFixed(1)+'°)</button>'+(S.trials.length>=6?'<div class="note">Up to 6 trials can be recorded</div>':'');
+ if(cur&&!S.running) side+=predFeedback();
+ side+='</div>';
+ var data='<div class="data"><div><h3 style="font-size:14px;margin-bottom:6px">Trial data</h3>'+tableHtml()+'<div class="note">Eroded = deposited in tray + carried into bin (sediment does not disappear)</div></div>'
+  +'<div>'+graphTabs()+chart(S.graph)
+  +'<button class="btn wide" data-a="go" data-v="compare"'+(distinct()>=3?'':' disabled')+' style="margin-top:8px">Compare data →</button>'+(distinct()>=3?'':'<div class="note">Unlocks after trials at 3 different slopes (now '+distinct()+')</div>')+'</div></div>';
+ var strip=(S.running||cur)?procStrip(S.running?{E:0,D:0,C:0}:cur):'';
+ return '<div class="main"><div class="stage">'+tabs+strip+'<div id="stageSvg">'+st+'</div>'+legend+'</div>'+side+'</div>'+data;
+}
+function distinct(){ var o={}; S.trials.forEach(function(t){o[t.th]=1;}); return Object.keys(o).length; }
+function measHtml(m){
+ var prev=null; if(m){ var i=S.trials.indexOf(m); if(i>0) prev=S.trials[i-1]; }
+ var card=function(k,lbl,unit,icon,color,max){ var v=m?m[k]:null, dv='';
+  if(m&&prev){ var d=Math.round((v-prev[k])*10)/10; dv='<span class="dl '+(d>0?'up':(d<0?'dn':''))+'">'+(d>0?'▲ ':(d<0?'▼ ':'= '))+Math.abs(d)+' <small>vs. trial '+prev.n+' ('+prev.th+'°)</small></span>'; }
+  return '<div class="mc"><div class="mh">'+icon+'<span>'+lbl+'</span></div><div class="mv"><b id="mv_'+k+'">'+(m?(k==='T'||k==='M'?v.toFixed(1):v):'—')+'</b><small>'+unit+'</small></div><div class="bar"><i id="mb_'+k+'" style="width:'+(m?Math.min(100,v/max*100):0)+'%;background:'+color+'"></i></div>'+dv+'</div>'; };
+ var ico=function(c,sh){ return '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">'+sh.replace(/C/g,c)+'</svg>'; };
+ return '<div class="mgrid">'
+  +card('T','Water arrival at outlet','s (model)',ico('var(--water)','<path d="M2 8h9M8 4l4 4-4 4" stroke="C" stroke-width="2" fill="none"/>'),'var(--water)',4)
+  +card('E','Eroded (both bends)','model units',ico('var(--ero)','<rect x="2" y="2" width="12" height="12" fill="C" opacity=".5"/><path d="M2 14L14 2" stroke="C" stroke-width="2"/>'),'var(--ero)',40)
+  +card('D','Deposited in the tray','model units',ico('var(--sed)','<circle cx="5" cy="10" r="2" fill="C"/><circle cx="10" cy="10" r="2" fill="C"/><circle cx="7.5" cy="6" r="2" fill="C"/>'),'var(--sed)',40)
+  +card('C','Carried into the bin','model units',ico('var(--ink)','<path d="M3 3h10l-1.5 10h-7z" stroke="C" stroke-width="1.6" fill="none"/>'),'var(--ink)',40)
+  +card('M','Outer bank retreat','cm (model)',ico('var(--ink)','<path d="M8 2v12M5 5l3-3 3 3M5 11l3 3 3-3" stroke="C" stroke-width="1.6" fill="none"/>'),'var(--ink)',5)
+  +'</div><div class="note">Simplified model values for learning, not real measurements.</div>';
+}
+function tableHtml(hl){
+ if(!S.trials.length) return '<div class="note" style="padding:18px 0">No data yet. Set a slope and run a trial.</div>';
+ return '<div class="tbl"><table><thead><tr><th>Trial</th><th>Slope (°)</th><th>Water arrival (s)</th><th>Eroded</th><th>Deposited</th><th>Bin</th><th>Bank retreat (cm)</th></tr></thead><tbody>'
+  +S.trials.map(function(t){return '<tr class="'+(S.cur&&S.cur.n===t.n&&!hl?'cur':'')+'" data-a="pick" data-v="'+t.n+'" style="cursor:pointer"><td>'+t.n+'</td><td>'+t.th.toFixed(1)+'</td><td>'+t.T.toFixed(1)+'</td><td>'+t.E+'</td><td>'+t.D+'</td><td>'+t.C+'</td><td>'+t.M.toFixed(1)+'</td></tr>';}).join('')+'</tbody></table></div>';
+}
+function trend(){
+ var a=S.trials.slice().sort(function(x,y){return x.th-y.th;}); if(distinct()<2) return null;
+ var lo=a[0], hi=a[a.length-1];
+ return {lo:lo,hi:hi,water:hi.T<lo.T?'short':(hi.T>lo.T?'long':'same'),sed:(hi.C>lo.C?'more':(hi.C<lo.C?'less':'same'))};
+}
+function predFeedback(){
+ var tr=trend(), Wt={short:'Shorter',same:'About the same',long:'Longer'}, Se={less:'Less',same:'About the same',more:'More'};
+ var pin='<div class="note" style="margin-top:6px">Check your pin prediction in the <b>My prediction</b> tab.</div>';
+ if(!tr) return '<div class="fb">Run one more trial at a different slope to compare predictions ①② with your data.'+pin+'</div>';
+ var w=tr.water===S.pred.water, s=tr.sed===S.pred.sed;
+ return '<div class="fb"><b>My predictions vs. data</b> ('+tr.lo.th+'° → '+tr.hi.th+'°)<br>① Water arrival time: predicted "'+Wt[S.pred.water]+'" · data '+tr.lo.T.toFixed(1)+' → '+tr.hi.T.toFixed(1)+' s '+(w?'<span class="okT">✓ match</span>':'<span class="noT">different</span>')+'<br>② Bin sediment: predicted "'+Se[S.pred.sed]+'" · data '+tr.lo.C+' → '+tr.hi.C+' '+(s?'<span class="okT">✓ match</span>':'<span class="noT">different</span>')+pin+'</div>';
+}
+function sectionSvg(m){
+ var d=Math.min(40,6+m.M*6);
+ return '<svg viewBox="0 0 640 150" role="img" aria-label="Bend cross-section" style="margin-top:6px"><rect width="640" height="150" rx="6" fill="var(--soft)"/><text x="14" y="20" class="lblS">Cross-section across bend 1 · model</text>'
+  +'<path d="M40 60 H600" stroke="var(--water)" stroke-width="1" stroke-dasharray="4 3"/>'
+  +'<path d="M40 60 C180 60 240 84 320 84 C400 84 460 60 600 60" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="5 4"/>'
+  +'<path d="M40 62 C160 66 260 76 360 '+(84+d*0.2)+' C440 '+(84+d)+' 520 '+(84+d)+' 560 60 L600 56" fill="none" stroke="var(--sed)" stroke-width="3"/>'
+  +'<text x="40" y="140" class="lblS">Inner bank (shallower: deposition)</text><text x="600" y="140" text-anchor="end" class="lblS">Outer bank (deeper: erosion)</text><text x="330" y="140" text-anchor="middle" class="lblS">Dashed = before · solid = after · depth exaggerated</text></svg>';
+}
+/* ---------- 비교: 표·그래프에서 값을 직접 읽는 질문 ---------- */
+function uniq(a){ var o={},r=[]; a.forEach(function(x){ if(!o[x]){o[x]=1;r.push(x);} }); return r; }
+function slopes(){ return uniq(S.trials.map(function(t){return t.th;})).sort(function(a,b){return a-b;}); }
+function byTh(th){ return S.trials.filter(function(t){return t.th===th;})[0]; }
+function cmpQs(){
+ var tr=trend(), sl=slopes();
+ var maxC=S.trials.reduce(function(a,t){return t.C>a.C?t:a;},S.trials[0]);
+ var diff=tr.hi.C-tr.lo.C;
+ var opts2=uniq([diff,tr.hi.C,Math.abs(tr.hi.E-tr.lo.E)]).sort(function(a,b){return a-b;});
+ return [
+  {k:'q1',q:'Which slope put the <b>most</b> sediment into the bin?',opts:sl.map(function(x){return x+'°';}),ans:maxC.th+'°',why:'Data: '+maxC.th+'° → bin '+maxC.C+' (largest)'},
+  {k:'q2',q:'How much <b>more</b> sediment went into the bin at '+tr.hi.th+'° than at '+tr.lo.th+'°?',opts:opts2.map(String),ans:String(diff),why:'Data: '+tr.hi.C+' − '+tr.lo.C+' = '+diff}
+ ];
+}
+function qBlock(i,q,cur,act){
+ var fb=''; if(cur!=null){ var ok=cur===q.ans; fb='<div class="fb" style="margin-top:6px">'+(ok?'<span class="okT">✓ Correct</span> · '+q.why:'<span class="noT">Check the numbers in the table again</span>')+'</div>'; }
+ return '<div class="pq"><p>'+(i+1)+'. '+q.q+'</p><div class="chrow">'+q.opts.map(function(o){return '<button class="ch'+(cur===o?' on':'')+'" data-a="'+act+'" data-k="'+q.k+'" data-v="'+o+'">'+o+'</button>';}).join('')+'</div>'+fb+'</div>';
+}
+function vCompare(){
+ var qs=cmpQs(), done=qs.every(function(q){return S.cmp[q.k]===q.ans;});
+ return '<div class="main"><div class="stage">'+graphTabs()+chart(S.graph)+tableHtml(true)+'</div>'
+ +'<div class="side"><div class="note">Find the numbers in the data table and graph.</div>'+qs.map(function(q,i){return qBlock(i,q,S.cmp[q.k],'cq');}).join('')
+ +'<div style="display:flex;gap:8px"><button class="btn" data-a="go" data-v="lab">← Run more trials</button><button class="btn pri" data-a="go" data-v="conclude"'+(done?'':' disabled')+'>Build conclusions →</button></div>'+(done?'':'<div class="note">Answer both correctly to continue</div>')+'</div></div>';
+}
+/* ---------- 결론: 문장 완성 ---------- */
+var CQ=[['T','As the slope increased, the time for water to reach the outlet',['got shorter','stayed similar','got longer'],' s'],['E','As the slope increased, the eroded sediment',['increased','stayed similar','decreased'],''],['C','As the slope increased, the sediment carried into the bin',['increased','stayed similar','decreased'],'']];
+function truth(k){ var tr=trend(), a=tr.lo[k], b=tr.hi[k]; if(k==='T') return b<a?'got shorter':(b>a?'got longer':'stayed similar'); return b>a?'increased':(b<a?'decreased':'stayed similar'); }
+function fmt(k,v){ return k==='T'?v.toFixed(1):v; }
+function conclSentence(tr){ return 'In this model, with all other conditions kept the same, when the downstream slope increased from '+tr.lo.th+'° to '+tr.hi.th+'°:<br>· the time for water to reach the outlet got shorter: <b>'+tr.lo.T.toFixed(1)+' → '+tr.hi.T.toFixed(1)+' s</b><br>· eroded sediment increased: <b>'+tr.lo.E+' → '+tr.hi.E+'</b><br>· sediment carried into the bin increased: <b>'+tr.lo.C+' → '+tr.hi.C+'</b>'; }
+function vConclude(){
+ var c=S.concl, tr=trend();
+ var qs=CQ.map(function(q,i){ var a=c[q[0]], fb='';
+  if(a){ var ok=a===truth(q[0]); fb='<div class="fb" style="margin-top:6px">Data: '+tr.lo.th+'° → '+tr.hi.th+'°: '+fmt(q[0],tr.lo[q[0]])+' → '+fmt(q[0],tr.hi[q[0]])+q[3]+' '+(ok?'<span class="okT">✓ Matches your data</span>':'<span class="noT">Check your data again</span>')+'</div>'; }
+  return '<div class="pq"><p class="sent">'+(i+1)+'. '+q[1]+' <span class="blank'+(a?' on':'')+'">'+(a||'　　　')+'</span>.</p><div class="chrow">'+q[2].map(function(o){return '<button class="ch'+(a===o?' on':'')+'" data-a="ans" data-k="'+q[0]+'" data-v="'+o+'">'+o+'</button>';}).join('')+'</div>'+fb+'</div>'; }).join('');
+ var done=CQ.every(function(q){return c[q[0]]===truth(q[0]);});
+ return '<div class="main"><div class="stage">'+graphTabs()+chart(S.graph)+tableHtml(true)+'</div>'
+ +'<div class="side"><div class="note">Choose the words that complete each sentence. Compare the smallest slope ('+tr.lo.th+'°) with the largest slope ('+tr.hi.th+'°).</div>'+qs
+ +(done?'<div class="fb" style="font-size:14.5px"><b>My conclusion</b><br>'+conclSentence(tr)+'</div>':'')
+ +'<div style="display:flex;gap:8px"><button class="btn" data-a="go" data-v="compare">← Back to compare</button><button class="btn pri" data-a="go" data-v="community"'+(done?'':' disabled')+'>Connect to the community →</button></div>'+(done?'':'<div class="note">All three sentences must match your data to continue</div>')+'</div></div>';
+}
+/* ---------- 공동체 연결: 지역 사진 + 내 실험 수치 + 다음 조사 ---------- */
+function sceneSvg(){
+ var c=S.comm, h='<svg viewBox="0 0 690 420" role="img" aria-label="Photo of a local site" id="svgc">';
+ h+='<defs><filter id="grT"><feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" seed="7"/><feColorMatrix type="matrix" values="0 0 0 0 .2  0 0 0 0 .35  0 0 0 0 .12  0 0 0 .55 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>'
+  +'<filter id="soT"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" seed="3"/><feColorMatrix type="matrix" values="0 0 0 0 .3  0 0 0 0 .2  0 0 0 0 .1  0 0 0 .5 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>'
+  +'<linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFD6E6"/><stop offset="1" stop-color="#E4EEF3"/></linearGradient></defs>';
+ if(c.photo){ h+='<image href="'+c.photo+'" x="0" y="0" width="690" height="420" preserveAspectRatio="xMidYMid slice"/>'; }
+ else {
+  h+='<rect width="690" height="420" fill="url(#skyG)"/>';
+  h+='<path d="M0 70 C120 58 260 64 380 56 C500 50 600 60 690 54 V330 H0 Z" fill="#6E8F4E"/><path d="M0 70 C120 58 260 64 380 56 C500 50 600 60 690 54 V330 H0 Z" fill="#6E8F4E" filter="url(#grT)"/>';
+  for(var f=10;f<690;f+=34) h+='<line x1="'+f+'" y1="'+(64-f*0.012)+'" x2="'+f+'" y2="'+(40-f*0.012)+'" stroke="#8A8A82" stroke-width="3"/>';
+  h+='<path d="M0 44 H690" stroke="#8A8A82" stroke-width="2"/><path d="M0 56 H690" stroke="#8A8A82" stroke-width="2"/>';
+  h+='<path d="M280 70 C300 120 250 200 230 330 H520 C500 220 450 130 430 66 Z" fill="#9C7A55"/><path d="M280 70 C300 120 250 200 230 330 H520 C500 220 450 130 430 66 Z" fill="#9C7A55" filter="url(#soT)"/>';
+  h+='<path d="M360 72 C372 120 344 170 366 220 C382 262 360 300 372 332" fill="none" stroke="#5E4630" stroke-width="9" stroke-linecap="round"/><path d="M360 72 C372 120 344 170 366 220 C382 262 360 300 372 332" fill="none" stroke="#7B6048" stroke-width="3" stroke-linecap="round"/>';
+  h+='<path d="M366 220 C400 240 420 270 430 330" fill="none" stroke="#5E4630" stroke-width="5" stroke-linecap="round"/>';
+  h+='<rect x="0" y="330" width="690" height="90" fill="#B9B7AF"/><rect x="0" y="326" width="690" height="8" fill="#9D9B93"/>';
+  for(var j=0;j<690;j+=86) h+='<line x1="'+j+'" y1="334" x2="'+(j-20)+'" y2="420" stroke="#A6A49C" stroke-width="2"/>';
+  h+='<path d="M300 334 C330 350 350 372 420 380 C470 384 500 360 470 342 C450 334 380 332 300 334 Z" fill="#9C7A55" opacity=".9"/><path d="M300 334 C330 350 350 372 420 380 C470 384 500 360 470 342 C450 334 380 332 300 334 Z" fill="#9C7A55" filter="url(#soT)"/>';
+  h+='<rect x="560" y="360" width="70" height="26" fill="#4A4A46"/>'; for(var g=566;g<626;g+=8) h+='<line x1="'+g+'" y1="363" x2="'+g+'" y2="383" stroke="#2E2E2B" stroke-width="3"/>';
+  h+='<rect x="8" y="392" width="370" height="22" rx="4" fill="rgba(0,0,0,.55)"/><text x="16" y="407" style="font:12px var(--body);fill:#fff">Example drawing · slope next to a school (not a real photo)</text>';
+ }
+ if(c.spot){ h+='<circle cx="'+c.spot.x+'" cy="'+c.spot.y+'" r="24" fill="none" stroke="#fff" stroke-width="5"/><circle cx="'+c.spot.x+'" cy="'+c.spot.y+'" r="24" fill="none" stroke="var(--c1)" stroke-width="3"/>'
+  +tag(Math.min(620,Math.max(60,c.spot.x)),c.spot.y-36,'Observation spot','var(--c1)'); }
+ return h+'</svg>';
+}
+var OBS=[['slope','Sloped ground'],['soil','Exposed soil'],['runoff','Runoff path'],['dep','Sediment buildup']];
+var NEXT={veg:['Vegetation cover','How does vegetation cover affect erosion?','Connects to the L2.5 Devil’s Lake lesson (plants and water flow).'],mat:['Surface material','How does surface material (sand, gravel, soil) affect erosion?','In this lab it was 🔒 kept the same (fine sand).'],water:['Water amount','How does the amount of water flowing in affect erosion?','In this lab it was 🔒 kept the same (1 cup).']};
+function commQs(){
+ var sl=slopes(), hi=byTh(sl[sl.length-1]);
+ var cs=uniq(S.trials.map(function(t){return t.C;})).sort(function(a,b){return a-b;}).map(String);
+ return [
+  {k:'a',q:'What was the <b>steepest</b> slope you tested?',opts:sl.map(function(x){return x+'°';}),ans:hi.th+'°',why:'Data: steepest slope '+hi.th+'°'},
+  {k:'b',q:'In that trial ('+hi.th+'°), how much sediment went into the bin?',opts:cs,ans:String(hi.C),why:'Data: '+hi.th+'° → bin '+hi.C+' (model units)'}
+ ];
+}
+function commDone(){ var c=S.comm; return c.spot&&Object.keys(c.obs).some(function(k){return c.obs[k];})&&commQs().every(function(q){return c.qa[q.k]===q.ans;})&&c.next; }
+function vCommunity(){
+ var c=S.comm, qs=commQs(), sl=slopes();
+ var obs='<div class="chk">'+OBS.map(function(o){return '<button class="ck'+(c.obs[o[0]]?' on':'')+'" data-a="obs" data-v="'+o[0]+'"'+(c.spot?'':' disabled')+'><span class="bx">'+(c.obs[o[0]]?'✓':'')+'</span>'+o[1]+'</button>';}).join('')+'</div>';
+ var nx='<div class="chrow">'+Object.keys(NEXT).map(function(k){return '<button class="ch'+(c.next===k?' on':'')+'" data-a="next" data-v="'+k+'">'+NEXT[k][0]+'</button>';}).join('')+'</div>'+(c.next?'<div class="fb" style="margin-top:6px"><b>Next investigation question</b><br>'+NEXT[c.next][1]+'<div class="note">'+NEXT[c.next][2]+'</div></div>':'');
+ var mini='<div class="tbl"><table><thead><tr><th>Slope (°)</th><th>Sediment in bin</th></tr></thead><tbody>'+sl.map(function(th){var t=byTh(th);return '<tr><td>'+th.toFixed(1)+'</td><td>'+t.C+'</td></tr>';}).join('')+'</tbody></table></div>';
+ var hi=byTh(sl[sl.length-1]);
+ return '<div class="main"><div class="stage"><div class="photobar"><b>Local site observation</b><label class="btn sm">Add photo<input type="file" id="photo" accept="image/*" hidden></label>'+(c.photo?'<button class="btn sm" data-a="photoReset">Use example drawing</button>':'')+'<span class="note">Teachers can add a photo of a nearby stream, slope, or drainage ditch. The photo is used only on this screen and is not saved.</span></div>'
+ +sceneSvg()+'<div class="note">① Click <b>one spot</b> in the photo that you would observe after heavy rain. '+(c.spot?'<span class="okT">✓ Selected</span>':'')+'</div></div>'
+ +'<div class="side"><div class="pq"><p>② Check everything you can <b>actually see in the photo</b> at that spot.</p>'+obs+(c.spot?'':'<div class="note">First click one spot in the photo</div>')+'</div>'
+ +qs.map(function(q,i){return qBlock(i+2,q,c.qa[q.k],'cqa').replace('<p>'+(i+3)+'. ','<p>'+['③','④'][i]+' ');}).join('')
+ +'<div class="pq"><p>⑤ Choose <b>one factor to investigate next</b> at this site.</p>'+nx+'</div>'
+ +'<button class="btn pri wide" data-a="go" data-v="done"'+(commDone()?'':' disabled')+'>Finish connection record →</button></div></div>'
+ +'<div class="data"><div><h3 style="font-size:14px;margin-bottom:6px">My lab data</h3>'+mini+'<div class="note">Steepest slope: <b>'+hi.th+'° → bin '+hi.C+'</b> (model units)</div></div><div>'+chart('C')+'</div></div>';
+}
+function vDone(){
+ var tr=trend(), c=S.comm, hi=byTh(slopes()[slopes().length-1]);
+ var seen=OBS.filter(function(o){return c.obs[o[0]];}).map(function(o){return o[1];}).join(' · ');
+ return '<div class="main"><div class="stage">'+sceneSvg()+'<div class="two">'+chart('C')+chart('B')+'</div></div><div class="side">'
+ +'<div class="fb" style="font-size:14.5px"><b>My conclusion</b><br>'+conclSentence(tr)+'</div>'
+ +'<div class="fb"><b>Sediment did not disappear</b><br>In every trial, eroded sediment = sediment deposited in the tray + sediment carried into the bin.</div>'
+ +'<div class="fb"><b>Community connection record</b><br>Observation spot: circled in the photo<br>Observed: '+seen+'<br>Lab data to compare: '+hi.th+'° → bin '+hi.C+'<br>Next investigation: '+NEXT[c.next][1]+'</div>'
+ +'<div class="fb"><b>Check it for real</b><br>Change the number of blocks on a real stream table and see whether the same pattern appears. The numbers in this model are for learning only.</div>'
+ +'<div style="display:flex;gap:8px"><button class="btn" data-a="go" data-v="community">← Back to community</button><button class="btn" data-a="restart">Start over</button></div></div></div>';
+}
+/* ---------- run animation ---------- */
+function run(){
+ var m=model(S.th); m.n=S.trials.length+1; S.running=true; S.view='result'; S.side='top'; render();
+ var u='m', wat=$('#wat'+u), wet=$('#wet'+u), core=$('#core'+u), gr=$('#grains'+u);
+ var L=wat.getTotalLength(); [wat,core,wet].forEach(function(p){ p.style.strokeDasharray=L; p.style.strokeDashoffset=L; });
+ var reduce=false; try{reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+ var tWater=reduce?0.2:m.T, tErode=reduce?0.3:2.4, t0=performance.now();
+ var callouts=[[1,'① Water flows'],[2,'② Outer banks of the bends erode'],[3,'③ Sediment is carried downstream'],[4,'④ Sediment is deposited on inner banks and downstream']];
+ var svg=$('#svgm'), pc=document.querySelectorAll('#proc .pc');
+ function frame(now){
+  var t=(now-t0)/1000;
+  var fw=Math.min(1,t/tWater); wat.style.strokeDashoffset=L*(1-fw); core.style.strokeDashoffset=L*(1-fw); wet.style.strokeDashoffset=L*(1-fw);
+  setM('T', fw<1?(t).toFixed(1):m.T.toFixed(1), fw<1?t/4:m.T/4);
+  if(fw>=1){
+   var fe=Math.min(1,(t-tWater)/tErode), s=m.s*fe, d=chan(s), a=sh(s);
+   wat.style.strokeDasharray='none'; core.style.strokeDasharray='none'; wet.style.strokeDasharray='none';
+   wat.setAttribute('d',d); wet.setAttribute('d',d); core.setAttribute('d',d);
+   var e=Math.round(m.E*fe), dd=Math.round(m.D*fe), cc=e-dd;
+   setM('E',e,m.E*fe/40); setM('D',dd,m.D*fe/40); setM('C',cc,cc/40); setM('M',(m.M*fe).toFixed(1),m.M*fe/5);
+   ['pE','pD','pC'].forEach(function(id,k){ var el=$('#'+id); if(el) el.textContent=[e,dd,cc][k]; });
+   pc.forEach(function(x){x.classList.add('live');});
+   var g='', n1=Math.min(12,m.D), n2=Math.min(14,m.C), PL=wat.getTotalLength(), f1=0, f2=0, yMin=1e9, yMax=-1e9;
+   for(var z=0;z<=80;z++){ var P=wat.getPointAtLength(PL*z/80); if(P.y<yMin&&P.x<340){yMin=P.y;f1=z/80;} if(P.y>yMax&&P.x>340){yMax=P.y;f2=z/80;} }
+   var at=function(f,side){ var P=wat.getPointAtLength(PL*Math.max(0,Math.min(1,f))), Q=wat.getPointAtLength(PL*Math.min(1,f+0.004)), dx=Q.x-P.x, dy=Q.y-P.y, n=Math.hypot(dx,dy)||1; return {x:P.x-dy/n*side, y:P.y+dx/n*side}; };
+   for(var i=0;i<n1;i++){ var p=Math.max(0,Math.min(1,fe*1.6-i/n1*0.6)); var P1=at(f1+(f2-f1)*p,(i%3-1)*6); g+='<circle cx="'+P1.x.toFixed(1)+'" cy="'+P1.y.toFixed(1)+'" r="2.6" fill="var(--sed)"/>'; }
+   for(var j=0;j<n2;j++){ var q=Math.max(0,Math.min(1,fe*1.6-j/n2*0.6)); if(q<1){ var P2=at(f2+(1-f2)*q,(j%3-1)*6); g+='<circle cx="'+P2.x.toFixed(1)+'" cy="'+P2.y.toFixed(1)+'" r="2.6" fill="var(--sed)"/>'; } }
+   gr.innerHTML=g;
+   var c=callouts.filter(function(k){return fe*4>=k[0]-1;}).pop();
+   showCall(svg, c?c[1]:callouts[0][1]);
+   if(fe>=1){ finish(m); return; }
+  } else showCall(svg,'① Water flows · '+t.toFixed(1)+' s so far');
+  requestAnimationFrame(frame);
+ }
+ requestAnimationFrame(frame);
+}
+function showCall(svg,txt){ var c=svg.querySelector('#callout'); if(!c){ svg.insertAdjacentHTML('beforeend','<g id="callout"><rect x="110" y="370" width="420" height="24" rx="12" fill="rgba(24,34,31,.82)"/><text x="320" y="386" text-anchor="middle" class="call"></text></g>'); c=svg.querySelector('#callout'); } c.querySelector('text').textContent=txt; }
+function setM(k,v,frac){ var e=$('#mv_'+k), b=$('#mb_'+k); if(e) e.textContent=v; if(b) b.style.width=Math.min(100,frac*100)+'%'; }
+function finish(m){ S.running=false; S.trials.push(m); S.cur=m; render(); }
+/* ---------- events ---------- */
+function bind(){
+ var th=$('#th'); if(th){ th.addEventListener('input',function(){ S.th=+th.value; $('#thBig').innerHTML=S.th.toFixed(1)+'<small>°</small>'; $('#sv').innerHTML=sideView(S.th); var rb=document.querySelector('[data-a=run]'); if(rb) rb.textContent='▶ Run trial '+(S.trials.length+1)+' ('+S.th.toFixed(1)+'°)'; }); }
+ var mix=$('#mix'); if(mix){ var apply=function(){ S.mix=+mix.value; var f=S.mix/100; var w=$('#baWrap'); ['#watm','#wetm','#corem'].forEach(function(id){ var p=w.querySelector(id); if(p) p.setAttribute('d',chan(S.cur.s*f)); }); w.querySelectorAll('rect[mask]').forEach(function(r){r.style.opacity=f;}); }; mix.addEventListener('input',apply); apply(); }
+ var ph=$('#photo'); if(ph) ph.addEventListener('change',function(){ var f=ph.files&&ph.files[0]; if(!f) return; var r=new FileReader(); r.onload=function(){ S.comm.photo=r.result; S.comm.spot=null; S.comm.obs={}; render(); }; r.readAsDataURL(f); });
+ document.querySelectorAll('.stage svg[id^="svg"]').forEach(function(sv){
+  var isTable=sv.id!=='svgc';
+  if(isTable) sv.addEventListener('mousemove',function(e){ var p=pt(sv,e); var c=$('#coordA'); if(!c) return; if(p.x>=20&&p.x<=620&&p.y>=30&&p.y<=390) c.textContent='Position ('+((p.x-20)/10).toFixed(1)+' cm, '+((p.y-30)/10).toFixed(1)+' cm)'; else c.textContent=''; });
+  if(S.screen==='predict'&&isTable) sv.addEventListener('click',function(e){ var p=pt(sv,e); if(!(p.x>=20&&p.x<=620&&p.y>=30&&p.y<=390)) return;
+   var pins=S.pred.pins, hit=-1; pins.forEach(function(q,i){ if(Math.min(Math.hypot(q.x-p.x,q.y-18-p.y),Math.hypot(q.x-p.x,q.y-p.y))<14) hit=i; });
+   if(hit>=0) pins.splice(hit,1); else if(pins.length<3) pins.push({x:Math.round(p.x),y:Math.round(p.y)}); render(); });
+  if(S.screen==='community'&&!isTable) sv.addEventListener('click',function(e){ var p=pt(sv,e); S.comm.spot={x:p.x,y:p.y}; render(); });
+ });
+}
+function pt(sv,e){ var p=sv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(sv.getScreenCTM().inverse()); }
+document.addEventListener('click',function(e){
+ var el=e.target.closest('[data-a]'); if(!el||el.disabled) return;
+ var a=el.getAttribute('data-a'), v=el.getAttribute('data-v'), k=el.getAttribute('data-k');
+ if(a==='go'){ S.screen=v; render(); window.scrollTo(0,0); }
+ else if(a==='pred'){ S.pred[k]=v; render(); }
+ else if(a==='run'){ if(!S.running) run(); }
+ else if(a==='view'){ S.view=v; render(); }
+ else if(a==='cmp'){ S.cmpWith=+v; render(); }
+ else if(a==='graph'){ S.graph=v; render(); }
+ else if(a==='pick'){ if(S.screen!=='lab') return; S.cur=S.trials.filter(function(t){return t.n==v;})[0]; S.view='result'; render(); }
+ else if(a==='sideT'){ S.side=S.side==='side'?'top':'side'; render(); }
+ else if(a==='cq'){ S.cmp[k]=v; render(); }
+ else if(a==='ans'){ S.concl[k]=v; render(); }
+ else if(a==='obs'){ S.comm.obs[v]=!S.comm.obs[v]; render(); }
+ else if(a==='cqa'){ S.comm.qa[k]=v; render(); }
+ else if(a==='next'){ S.comm.next=v; render(); }
+ else if(a==='photoReset'){ S.comm.photo=null; S.comm.spot=null; S.comm.obs={}; render(); }
+ else if(a==='restart'){ init(); render(); }
+});
+window.__S=function(){return S;};
+window.__classify=classify;
+init(); render();
+})();
+</script>
+</body></html>
